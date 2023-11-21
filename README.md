@@ -1,0 +1,4 @@
+# Web Serial Arduino
+
+Web Serial APIを用いて、Arduinoとwebサイトからシリアル通信をするサンプルコードです。<br>
+ArduinoとPCをUSBシリアル等で接続し、専用のwebサイトからシリアルポートを開くことでweb上からArduinoを制御したり、Arduinoのシリアルプリントを確認することができます。
