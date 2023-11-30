@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Serial Arduino</title>
+    <script src="js/main.js"></script>
 </head>
 <body>
-    <script src="js/main.js"></script>
+    <h1>Web Serial API Console</h1>
+    <button onclick="onConnectButtonClick()">Connect</button> BaudRate: 9600
+    <br />
+
+    <input type="text" id="sendInput" />
+    <input type="button" value="Send" onclick="sendSerial();" />
+    <br />
+    <textarea cols="80" rows="6" id="outputArea" readonly></textarea>
 </body>
 </html>
