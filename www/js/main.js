@@ -1,22 +1,44 @@
-let port;
+// 改行コードで区切る
+class LineBreakTransformer {
+    constructor() {
+      this.chunks = "";
+    }
+
+    transform(chunk, controller) {
+      this.chunks += chunk;
+      const lines = this.chunks.split("\r\n");
+      this.chunks = lines.pop();
+      lines.forEach((line) => controller.enqueue(line));
+    }
+
+    flush(controller) {
+      controller.enqueue(this.chunks);
+    }
+}
+
+
 
 async function onConnectButtonClick() {
     try {
-        port = await navigator.serial.requestPort();
+        const port = await navigator.serial.requestPort();
         await port.open({ baudRate: 115200 });
 
-        while (port.readable) {
-            const reader = port.readable.getReader();
+        while(port.readable) {
+            const textDecoder = new TextDecoderStream();
+            const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+            const reader = textDecoder.readable
+            .pipeThrough(new TransformStream(new LineBreakTransformer()))
+            .getReader();
 
             try {
-                while (true) {
+                while(true) {
                     const { value, done } = await reader.read();
                     if (done) {
                         addSerial("Canceled\n");
                         break;
                     }
-                    const inputValue = new TextDecoder().decode(value);
-                    addSerial(inputValue);
+                    addSerial(value);
+                    //console.log(value);
                 }
             } catch (error) {
                 addSerial("Error: Read" + error + "\n");
@@ -31,6 +53,7 @@ async function onConnectButtonClick() {
 
 function addSerial(msg) {
     var textarea = document.getElementById('outputArea');
+    msg += "\n";
     textarea.value += msg;
     textarea.scrollTop = textarea.scrollHeight;
 }
